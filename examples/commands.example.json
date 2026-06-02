@@ -1,0 +1,38 @@
+{
+  "menuRootLabel": "Launch Here",
+  "menuRootIcon": null,
+  "commands": [
+    {
+      "id": "copilot-yolo",
+      "label": "Copilot (YOLO, experimental)",
+      "terminal": "wt",
+      "command": "copilot --yolo --experimental",
+      "keepOpen": true,
+      "icon": null
+    },
+    {
+      "id": "copilot",
+      "label": "Copilot",
+      "terminal": "wt",
+      "command": "copilot",
+      "keepOpen": true,
+      "icon": null
+    },
+    {
+      "id": "claude",
+      "label": "Claude Code",
+      "terminal": "wt",
+      "command": "claude",
+      "keepOpen": true,
+      "icon": null
+    },
+    {
+      "id": "pwsh-here",
+      "label": "PowerShell here",
+      "terminal": "pwsh",
+      "command": "",
+      "keepOpen": true,
+      "icon": null
+    }
+  ]
+}
