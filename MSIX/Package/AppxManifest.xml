@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AppxManifest.xml — Sparse MSIX package for LaunchHere.
+
+  Sparse package: ships the COM handler DLL and registers it as a Win11
+  file-explorer context-menu extension WITHOUT a full Store/MSIX install.
+  Registered against the on-disk handler folder via:
+
+      Add-AppxPackage -Register -ExternalLocation <staging-folder>
+
+  Two cross-references must stay in sync:
+
+   * The CLSID in <com:Class Id="..."> below MUST match
+     the Guid attribute on RootCommand in ExplorerCommand\RootCommand.cs
+     and ClsidGuids.RootCommandClsid in DllExports.cs.
+
+   * The Publisher attribute MUST match the subject of the self-signed cert
+     used to sign the package (see ..\Package\Register-Package.ps1).
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap3 com desktop4 desktop5 rescap">
+
+  <Identity
+    Name="LaunchHere.Shell"
+    Publisher="CN=LaunchHere Dev"
+    Version="0.1.0.0"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>LaunchHere</DisplayName>
+    <PublisherDisplayName>LaunchHere</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="LaunchHere" Executable="ExplorerCommand.dll" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        AppListEntry="none"
+        DisplayName="LaunchHere"
+        Description="Right-click a folder and launch a configured command in a terminal."
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        BackgroundColor="transparent" />
+
+      <Extensions>
+        <!-- COM in-proc server registration. Explorer loads ExplorerCommand.dll
+             and calls DllGetClassObject for this CLSID. -->
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:SurrogateServer DisplayName="LaunchHere Shell">
+              <com:Class Id="3F2504E0-4F89-41D3-9A0C-0305E82C3301"
+                         Path="ExplorerCommand.dll"
+                         ThreadingModel="STA" />
+            </com:SurrogateServer>
+          </com:ComServer>
+        </com:Extension>
+
+        <!-- Tells File Explorer to call our handler when the user right-clicks
+             a Directory or Directory.Background. Two entries cover both. -->
+        <desktop4:Extension Category="windows.fileExplorerContextMenus">
+          <desktop4:FileExplorerContextMenus>
+            <desktop5:ItemType Type="Directory">
+              <desktop5:Verb Id="LaunchHereOnFolder"
+                             Clsid="3F2504E0-4F89-41D3-9A0C-0305E82C3301" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type="Directory\Background">
+              <desktop5:Verb Id="LaunchHereOnBackground"
+                             Clsid="3F2504E0-4F89-41D3-9A0C-0305E82C3301" />
+            </desktop5:ItemType>
+          </desktop4:FileExplorerContextMenus>
+        </desktop4:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+
+</Package>

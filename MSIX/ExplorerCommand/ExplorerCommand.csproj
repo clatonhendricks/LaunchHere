@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    LaunchHere ExplorerCommand handler.
+
+    NativeAOT C# class library producing a self-contained native DLL
+    (no .NET runtime needed on the target machine). Registered as an in-proc
+    COM server by the parent Sparse MSIX package; Windows Explorer loads it
+    to populate the Win11 main context menu via IExplorerCommand.
+
+    Build:  dotnet publish -c Release -r win-x64
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <Platforms>x64;arm64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <PublishAot>true</PublishAot>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LaunchHere.Shell</RootNamespace>
+    <AssemblyName>ExplorerCommand</AssemblyName>
+    <EnableComHosting>true</EnableComHosting>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <!--
+    The CLSID below MUST match RootCommand's [Guid] AND the <com:Class Id="...">
+    in ..\Package\AppxManifest.xml. If you change one, change the others.
+  -->
+
+</Project>
