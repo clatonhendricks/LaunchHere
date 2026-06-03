@@ -47,14 +47,14 @@ Copy-Item $assets (Join-Path $layout 'Assets') -Recurse
 $repoRoot      = Split-Path -Parent $msixRoot
 $psFlavorCfg   = Join-Path $repoRoot 'PowerShell\config\commands.json'
 $psFlavorEx    = Join-Path $repoRoot 'PowerShell\examples\commands.example.json'
-$cfgSource = if (Test-Path $psFlavorCfg) { $psFlavorCfg }
-             elseif (Test-Path $psFlavorEx) { $psFlavorEx }
-             else { $null }
+$cfgSource = $null
+if (Test-Path $psFlavorCfg)      { $cfgSource = $psFlavorCfg }
+elseif (Test-Path $psFlavorEx)   { $cfgSource = $psFlavorEx }
 if ($cfgSource) {
     Copy-Item $cfgSource (Join-Path $layout 'commands.json')
     Write-Host "[LaunchHere] Bundled config from $cfgSource"
 } else {
-    Write-Warning "[LaunchHere] No commands.json found — menu will be empty until %LOCALAPPDATA%\LaunchHere\commands.json exists."
+    Write-Warning "[LaunchHere] No commands.json found - menu will be empty until %LOCALAPPDATA%\LaunchHere\commands.json exists."
 }
 
 # ---- 3. Cert ---------------------------------------------------------------
