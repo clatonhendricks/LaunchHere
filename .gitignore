@@ -20,3 +20,4 @@ MSIX/staging/
 MSIX/*.msix
 MSIX/*.pfx
 MSIX/register.log
+MSIX/**/register.log
