@@ -39,6 +39,7 @@ if (Test-Path $layout) { Remove-Item $layout -Recurse -Force }
 New-Item -ItemType Directory -Path $layout | Out-Null
 Copy-Item $manifest $layout
 Copy-Item (Join-Path $publishDir 'ExplorerCommand.dll') $layout
+Copy-Item (Join-Path $msixRoot 'Stub\bin\publish\LaunchHereStub.exe') $layout
 Copy-Item $assets (Join-Path $layout 'Assets') -Recurse
 
 # ---- 3. Cert ---------------------------------------------------------------

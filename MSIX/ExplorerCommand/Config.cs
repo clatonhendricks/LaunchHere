@@ -86,12 +86,14 @@ internal static class ConfigLoader
         if (!string.IsNullOrEmpty(localAppData))
             yield return Path.Combine(localAppData, "LaunchHere", "commands.json");
 
-        try
-        {
-            var asmDir = Path.GetDirectoryName(typeof(ConfigLoader).Assembly.Location);
-            if (!string.IsNullOrEmpty(asmDir))
-                yield return Path.Combine(asmDir, "commands.json");
-        }
-        catch { /* AOT: Assembly.Location may be empty */ }
+        var asmDir = SafeBaseDirectory();
+        if (!string.IsNullOrEmpty(asmDir))
+            yield return Path.Combine(asmDir, "commands.json");
+    }
+
+    private static string? SafeBaseDirectory()
+    {
+        try { return AppContext.BaseDirectory; }
+        catch { return null; }
     }
 }

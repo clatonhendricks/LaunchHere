@@ -47,9 +47,7 @@ internal partial class RootClassFactory : IClassFactory
         try
         {
             var obj = new RootCommand();
-            // Get an IUnknown for the managed object via the source-generated marshaller.
-            var strategy = StrategyBasedComWrappers.DefaultMarshallingInstance;
-            var unk = strategy.GetOrCreateComInterfaceForObject(obj, CreateComInterfaceFlags.None);
+            var unk = DllExports.Wrappers.GetOrCreateComInterfaceForObject(obj, CreateComInterfaceFlags.None);
             try
             {
                 return Marshal.QueryInterface(unk, in riid, out ppvObject);
@@ -70,7 +68,7 @@ internal partial class RootClassFactory : IClassFactory
 
 internal static class DllExports
 {
-    private static readonly StrategyBasedComWrappers _wrappers = new();
+    internal static readonly StrategyBasedComWrappers Wrappers = new();
 
     [UnmanagedCallersOnly(EntryPoint = "DllGetClassObject")]
     public static unsafe int DllGetClassObject(Guid* rclsid, Guid* riid, IntPtr* ppv)
@@ -84,7 +82,7 @@ internal static class DllExports
         try
         {
             var factory = new RootClassFactory();
-            var unk = _wrappers.GetOrCreateComInterfaceForObject(factory, CreateComInterfaceFlags.None);
+            var unk = Wrappers.GetOrCreateComInterfaceForObject(factory, CreateComInterfaceFlags.None);
             try
             {
                 return Marshal.QueryInterface(unk, in *riid, out *ppv);

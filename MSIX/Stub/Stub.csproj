@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Tiny placeholder exe for the LaunchHere sparse MSIX.
+
+    The MSIX schema requires <Application Executable="*.exe">. The actual
+    context-menu handler is in ExplorerCommand.dll (loaded in-proc by Explorer
+    via DllGetClassObject); this stub never runs. It just satisfies the
+    manifest schema. Published as NativeAOT so the package stays runtime-free.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <PublishAot>true</PublishAot>
+    <RootNamespace>LaunchHere.Shell.Stub</RootNamespace>
+    <AssemblyName>LaunchHereStub</AssemblyName>
+    <Nullable>enable</Nullable>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+</Project>

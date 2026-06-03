@@ -9,3 +9,14 @@ desktop.ini
 # Local user config — share via examples/commands.example.json instead
 # Uncomment if you don't want personal command lists tracked:
 # config/commands.json
+
+# .NET build outputs
+bin/
+obj/
+*.user
+
+# MSIX scaffold staging / generated artifacts
+MSIX/staging/
+MSIX/*.msix
+MSIX/*.pfx
+MSIX/register.log
