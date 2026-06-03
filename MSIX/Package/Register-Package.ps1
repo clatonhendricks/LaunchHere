@@ -42,6 +42,21 @@ Copy-Item (Join-Path $publishDir 'ExplorerCommand.dll') $layout
 Copy-Item (Join-Path $msixRoot 'Stub\bin\publish\LaunchHereStub.exe') $layout
 Copy-Item $assets (Join-Path $layout 'Assets') -Recurse
 
+# Ship a default commands.json. Prefer any existing config the user already uses
+# from the PowerShell flavor; fall back to its example template.
+$repoRoot      = Split-Path -Parent $msixRoot
+$psFlavorCfg   = Join-Path $repoRoot 'PowerShell\config\commands.json'
+$psFlavorEx    = Join-Path $repoRoot 'PowerShell\examples\commands.example.json'
+$cfgSource = if (Test-Path $psFlavorCfg) { $psFlavorCfg }
+             elseif (Test-Path $psFlavorEx) { $psFlavorEx }
+             else { $null }
+if ($cfgSource) {
+    Copy-Item $cfgSource (Join-Path $layout 'commands.json')
+    Write-Host "[LaunchHere] Bundled config from $cfgSource"
+} else {
+    Write-Warning "[LaunchHere] No commands.json found — menu will be empty until %LOCALAPPDATA%\LaunchHere\commands.json exists."
+}
+
 # ---- 3. Cert ---------------------------------------------------------------
 $cert = Get-ChildItem Cert:\CurrentUser\My |
     Where-Object { $_.Subject -eq $certSubject } |
@@ -101,5 +116,14 @@ if ($LASTEXITCODE -ne 0) { throw "signtool failed ($LASTEXITCODE)" }
 # ExternalLocation lets us iterate on the handler DLL without re-packing.
 Write-Host "[LaunchHere] Registering sparse package at $layout..."
 Add-AppxPackage -Path $msixOut -ExternalLocation $layout -AllowUnsigned:$false
+
+# Explorer caches COM activation tables — must be restarted to pick up the
+# newly-registered shell extension. Documented limitation of MSIX shell exts.
+Write-Host "[LaunchHere] Restarting File Explorer..."
+Get-Process explorer -ErrorAction SilentlyContinue | Stop-Process -Force
+Start-Sleep -Seconds 2
+if (-not (Get-Process explorer -ErrorAction SilentlyContinue)) {
+    Start-Process explorer.exe
+}
 
 Write-Host "[LaunchHere] Done. Right-click a folder in Explorer to test."

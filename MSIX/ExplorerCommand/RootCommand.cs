@@ -40,14 +40,22 @@ public partial class RootCommand : IExplorerCommand
 
     public int GetState(IShellItemArray? psiItemArray, bool fOkToBeSlow, out EXPCMDSTATE pCmdState)
     {
-        pCmdState = EXPCMDSTATE.ECS_ENABLED; return HResult.S_OK;
+        var entries = ConfigLoader.Load().Commands;
+        pCmdState = (entries is null || entries.Count == 0)
+            ? EXPCMDSTATE.ECS_HIDDEN
+            : EXPCMDSTATE.ECS_ENABLED;
+        return HResult.S_OK;
     }
 
     public int Invoke(IShellItemArray? psiItemArray, IntPtr pbc) => HResult.S_OK;
 
     public int GetFlags(out EXPCMDFLAGS pFlags)
     {
-        pFlags = EXPCMDFLAGS.ECF_HASSUBCOMMANDS; return HResult.S_OK;
+        var entries = ConfigLoader.Load().Commands;
+        pFlags = (entries is not null && entries.Count > 0)
+            ? EXPCMDFLAGS.ECF_HASSUBCOMMANDS
+            : EXPCMDFLAGS.ECF_DEFAULT;
+        return HResult.S_OK;
     }
 
     public int EnumSubCommands(out IEnumExplorerCommand ppEnum)

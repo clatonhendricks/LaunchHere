@@ -102,7 +102,7 @@ public partial interface IExplorerCommand
 [Guid("a88826f8-186f-4987-aade-ea0cef8fbfe8")]
 public partial interface IEnumExplorerCommand
 {
-    [PreserveSig] int Next(uint celt, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] IExplorerCommand[] pUICommand, out uint pceltFetched);
+    [PreserveSig] unsafe int Next(uint celt, IntPtr* pUICommand, out uint pceltFetched);
     [PreserveSig] int Skip(uint celt);
     [PreserveSig] int Reset();
     [PreserveSig] int Clone(out IEnumExplorerCommand ppenum);

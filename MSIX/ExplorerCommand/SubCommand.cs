@@ -81,12 +81,27 @@ internal partial class SubCommandEnumerator : IEnumExplorerCommand
 
     public SubCommandEnumerator(IReadOnlyList<IExplorerCommand> items) { _items = items; }
 
-    public int Next(uint celt, IExplorerCommand[] pUICommand, out uint pceltFetched)
+    public unsafe int Next(uint celt, IntPtr* pUICommand, out uint pceltFetched)
     {
         pceltFetched = 0;
-        if (pUICommand is null || celt == 0) return HResult.S_FALSE;
+        if (pUICommand == null || celt == 0) return HResult.S_FALSE;
+        var iid = typeof(IExplorerCommand).GUID;
         while (pceltFetched < celt && _pos < _items.Count)
-            pUICommand[pceltFetched++] = _items[_pos++];
+        {
+            var item = _items[_pos++];
+            var unk = DllExports.Wrappers.GetOrCreateComInterfaceForObject(item, CreateComInterfaceFlags.None);
+            try
+            {
+                if (Marshal.QueryInterface(unk, in iid, out var ptr) == 0)
+                {
+                    pUICommand[pceltFetched++] = ptr;
+                }
+            }
+            finally
+            {
+                if (unk != IntPtr.Zero) Marshal.Release(unk);
+            }
+        }
         return pceltFetched == celt ? HResult.S_OK : HResult.S_FALSE;
     }
 
