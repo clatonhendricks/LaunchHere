@@ -11,7 +11,7 @@ terminal (`wt` / `cmd` / `powershell` / `pwsh`).
 
 LaunchHere ships in two flavors so you can pick the trade-off that fits your environment:
 
-| | [**PowerShell**](./PowerShell/) (Phase 1) | [**MSIX**](./MSIX/) (Phase 2) |
+| | [**PowerShell**](./PowerShell/) (Preview mode) | [**MSIX**](./MSIX/) (Phase 2 - In progress) |
 |---|---|---|
 | **Status** | ✅ Stable | 🧪 Scaffold / WIP |
 | **Install method** | Registry under `HKCU` (no admin) | Sparse MSIX + signed COM handler |
